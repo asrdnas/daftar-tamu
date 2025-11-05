@@ -22,7 +22,7 @@ class AdminResource extends Resource
     
     protected static ?string $navigationLabel = 'Admin';
 
-    protected static ?string $navigationGroup = 'Role Management Klinik';
+    protected static ?string $navigationGroup = 'Role Management';
 
     protected static ?string $pluralModelLabel = 'List Data Admin';
 
