@@ -53,42 +53,77 @@ class DaftarTamuResource extends Resource
     }
 
     public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('nama_tamu')
-                    ->label('Nama Tamu')
-                    ->searchable()
-                    ->sortable(),
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('nama_tamu')
+                ->label('Nama Tamu')
+                ->searchable()
+                ->sortable()
+                ->description(fn ($record) => $record->status === 'VIP' ? 'Tamu kehormatan' : 'Tamu reguler')
+                ->weight('bold')
+                ->color(fn ($record) => $record->status === 'VIP' ? 'warning' : 'gray'),
 
-                Tables\Columns\TextColumn::make('alamat')
-                    ->label('Alamat')
-                    ->searchable(),
+            Tables\Columns\TextColumn::make('alamat')
+                ->label('Alamat')
+                ->searchable()
+                ->limit(20)
+                ->tooltip(fn ($record) => $record->alamat),
 
-                Tables\Columns\TextColumn::make('meja')
-                    ->label('Meja')
-                    ->searchable()
-                    ->sortable(),
+            Tables\Columns\TextColumn::make('meja')
+                ->label('Meja')
+                ->sortable()
+                ->alignCenter()
+                ->badge()
+                ->color('success'),
 
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->searchable(),
-            ])
-            ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'vip' => 'VIP',
-                    ]),
-            ])
-            ->actions([
-                EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            Tables\Columns\BadgeColumn::make('status')
+                ->label('Status')
+                ->colors([
+                    'warning' => fn ($state) => $state === 'VIP',
+                    'gray' => fn ($state) => $state === 'REGULER',
+                ])
+                ->icon(fn ($state) => $state === 'VIP' ? 'heroicon-o-star' : 'heroicon-o-user')
+                ->formatStateUsing(fn ($state) => strtoupper($state))
+                ->sortable(),
+        ])
+
+        ->filters([
+            Tables\Filters\SelectFilter::make('status')
+                ->label('Filter Status')
+                ->options([
+                    'VIP' => 'VIP',
+                    'REGULER' => 'Reguler',
                 ]),
-            ]);
-    }
+        ])
+
+        ->actions([
+            Tables\Actions\EditAction::make()
+                ->label('Edit')
+                ->icon('heroicon-o-pencil-square')
+                ->color('warning')
+                ->tooltip('Edit data tamu ini'),
+
+            Tables\Actions\DeleteAction::make()
+                ->label('Hapus')
+                ->icon('heroicon-o-trash')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->tooltip('Hapus data tamu ini'),
+        ])
+
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make()
+                    ->label('Hapus Terpilih')
+                    ->color('danger'),
+            ]),
+        ])
+
+        ->striped() // buat baris tabel bergantian warna agar mudah dibaca
+        ->poll('5s'); // auto refresh tiap 5 detik (opsional)
+}
+
 
     public static function getRelations(): array
     {
