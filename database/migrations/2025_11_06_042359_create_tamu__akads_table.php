@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tamus', function (Blueprint $table) {
+        Schema::create('tamu__akads', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_tamu');
-            $table->text('alamat');
-            $table->string('meja');
-            $table->string('status');
+            $table->string('nama_tamu_akad');
+            $table->string('alamat');
             $table->enum('kehadiran', ['hadir', 'tidak'])->default('tidak');
-            $table->enum('status_tamu', ['stay', 'pulang'])->default('stay');
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tamus');
+        Schema::dropIfExists('tamu__akads');
     }
 };

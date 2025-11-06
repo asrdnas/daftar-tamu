@@ -20,9 +20,12 @@ class DaftarTamuResource extends Resource
     protected static ?string $model = Tamu::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationLabel = 'Daftar Tamu';
 
-     protected static ?string $pluralModelLabel = 'List Daftar Tamu VIP';
+    protected static ?string $navigationLabel = 'Daftar Tamu Resepsi';
+
+    protected static ?string $navigationGroup = 'Daftar Tamu';
+
+     protected static ?string $pluralModelLabel = 'List Daftar Tamu Resepsi VIP';
 
     public static function form(Form $form): Form
     {
@@ -49,44 +52,112 @@ class DaftarTamuResource extends Resource
                     ])
                     ->default('VIP')
                     ->required(),
+                Forms\Components\Select::make('status_tamu')
+                    ->label('Status Tamu')
+                    ->options([
+                        'stay' => 'stay',
+                        'pulang' => 'pulang',
+                    ])
+                    ->default('stay')
+                    ->required(),
+                Forms\Components\Select::make('kehadiran')
+                    ->label('Kehadiran')
+                    ->options([
+                        'hadir' => 'Hadir',
+                        'tidak' => 'Tidak Hadir',
+                    ])
+                    ->default('tidak')
+                    ->required(),
             ]);
     }
 
     public static function table(Table $table): Table
 {
     return $table
-        ->columns([
-            Tables\Columns\TextColumn::make('nama_tamu')
-                ->label('Nama Tamu')
-                ->searchable()
-                ->sortable()
-                ->description(fn ($record) => $record->status === 'VIP' ? 'Tamu kehormatan' : 'Tamu reguler')
-                ->weight('bold')
-                ->color(fn ($record) => $record->status === 'VIP' ? 'warning' : 'gray'),
+    ->columns([
+        // Kolom Nama Tamu
+        Tables\Columns\TextColumn::make('nama_tamu')
+            ->label('Nama Tamu')
+            ->searchable()
+            ->sortable()
+            ->weight('bold')
+            ->color(fn ($record) => $record->status === 'VIP' ? 'warning' : 'gray')
+            ->icon(fn ($record) => $record->status === 'VIP' ? 'heroicon-o-star' : 'heroicon-o-user')
+            ->tooltip(fn ($record) => $record->status === 'VIP' ? 'Tamu Kehormatan' : 'Tamu Reguler')
+            ->alignCenter(),
 
-            Tables\Columns\TextColumn::make('alamat')
-                ->label('Alamat')
-                ->searchable()
-                ->limit(20)
-                ->tooltip(fn ($record) => $record->alamat),
+        // Kolom Alamat
+        Tables\Columns\TextColumn::make('alamat')
+            ->label('Alamat')
+            ->limit(100)
+            ->tooltip(fn ($record) => $record->alamat)
+            ->wrap()
+            ->alignCenter(),
 
-            Tables\Columns\TextColumn::make('meja')
-                ->label('Meja')
-                ->sortable()
-                ->alignCenter()
-                ->badge()
-                ->color('success'),
+        // Kolom Meja
+        Tables\Columns\BadgeColumn::make('meja')
+            ->label('Meja')
+            ->color('success')
+            ->sortable()
+            ->alignCenter(),
 
-            Tables\Columns\BadgeColumn::make('status')
-                ->label('Status')
-                ->colors([
-                    'warning' => fn ($state) => $state === 'VIP',
-                    'gray' => fn ($state) => $state === 'REGULER',
-                ])
-                ->icon(fn ($state) => $state === 'VIP' ? 'heroicon-o-star' : 'heroicon-o-user')
-                ->formatStateUsing(fn ($state) => strtoupper($state))
-                ->sortable(),
-        ])
+        // Kolom Status (VIP / REGULER)
+        Tables\Columns\BadgeColumn::make('status')
+            ->label('Status')
+            ->colors([
+                'warning' => fn ($state) => $state === 'VIP',
+                'gray' => fn ($state) => $state !== 'VIP',
+            ])
+            ->icon(fn ($state) => $state === 'VIP' ? 'heroicon-o-star' : 'heroicon-o-user')
+            ->formatStateUsing(fn ($state) => strtoupper($state))
+            ->sortable()
+            ->alignCenter(),
+
+            Tables\Columns\ToggleColumn::make('status_tamu')
+            ->label('Status Tamu')
+            ->onIcon('heroicon-o-home')
+            ->offIcon('heroicon-o-arrow-left')
+            ->onColor('success')
+            ->offColor('danger')
+            ->alignCenter()
+            ->disabledClick() // ⬅️ tambahkan ini
+            ->getStateUsing(fn ($record) => $record->status_tamu === 'stay')
+            ->updateStateUsing(function ($state, $record) {
+                $record->status_tamu = $state ? 'stay' : 'pulang';
+                $record->save();
+
+                \Filament\Notifications\Notification::make()
+                    ->title('Status tamu diperbarui')
+                    ->body("{$record->nama_tamu} kini berstatus " . ($state ? 'Stay' : 'Pulang'))
+                    ->success()
+                    ->send();
+
+                return $record->status_tamu === 'stay';
+            }),
+
+        // Kolom Kehadiran (pakai toggle interaktif)
+        Tables\Columns\ToggleColumn::make('kehadiran')
+            ->label('Kehadiran')
+            ->onIcon('heroicon-o-check-circle')
+            ->offIcon('heroicon-o-x-circle')
+            ->onColor('success')
+            ->offColor('danger')
+            ->alignCenter()
+            ->disabledClick() // ⬅️ Tambahkan ini agar Filament tidak kirim boolean langsung ke DB
+            ->getStateUsing(fn ($record) => $record->kehadiran === 'hadir')
+            ->updateStateUsing(function ($state, $record) {
+                $record->kehadiran = $state ? 'hadir' : 'tidak';
+                $record->save();
+
+                \Filament\Notifications\Notification::make()
+                    ->title('Kehadiran diperbarui')
+                    ->body("{$record->nama_tamu} kini ditandai sebagai " . ($state ? 'Hadir ✅' : 'Tidak Hadir ❌'))
+                    ->success()
+                    ->send();
+
+                return $record->kehadiran === 'hadir';
+            }),
+    ])
 
         ->filters([
             Tables\Filters\SelectFilter::make('status')
@@ -120,8 +191,8 @@ class DaftarTamuResource extends Resource
             ]),
         ])
 
-        ->striped() // buat baris tabel bergantian warna agar mudah dibaca
-        ->poll('5s'); // auto refresh tiap 5 detik (opsional)
+        ->striped()
+        ->poll('3s');
 }
 
 

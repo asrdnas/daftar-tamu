@@ -4,13 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tamu extends Model
+class Tamu_Akad extends Model
 {
     protected $fillable = [
-        'nama_tamu',
+        'nama_tamu_akad',
         'alamat',
-        'meja',
-        'status',
-        'status_tamu',
+        'kehadiran',
     ];
 }
