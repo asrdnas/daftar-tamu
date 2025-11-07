@@ -95,14 +95,14 @@ class DaftarTamuResource extends Resource
             ->alignCenter(),
 
         // Kolom Meja
-        Tables\Columns\BadgeColumn::make('meja')
+        Tables\Columns\TextColumn::make('meja')
             ->label('Meja')
             ->color('success')
             ->sortable()
             ->alignCenter(),
 
         // Kolom Status (VIP / REGULER)
-        Tables\Columns\BadgeColumn::make('status')
+        Tables\Columns\TextColumn::make('status')
             ->label('Status')
             ->colors([
                 'warning' => fn ($state) => $state === 'VIP',
@@ -120,18 +120,11 @@ class DaftarTamuResource extends Resource
             ->onColor('success')
             ->offColor('danger')
             ->alignCenter()
-            ->disabledClick() // ⬅️ tambahkan ini
+            ->disabledClick() 
             ->getStateUsing(fn ($record) => $record->status_tamu === 'stay')
             ->updateStateUsing(function ($state, $record) {
                 $record->status_tamu = $state ? 'stay' : 'pulang';
                 $record->save();
-
-                \Filament\Notifications\Notification::make()
-                    ->title('Status tamu diperbarui')
-                    ->body("{$record->nama_tamu} kini berstatus " . ($state ? 'Stay' : 'Pulang'))
-                    ->success()
-                    ->send();
-
                 return $record->status_tamu === 'stay';
             }),
 
@@ -148,13 +141,6 @@ class DaftarTamuResource extends Resource
             ->updateStateUsing(function ($state, $record) {
                 $record->kehadiran = $state ? 'hadir' : 'tidak';
                 $record->save();
-
-                \Filament\Notifications\Notification::make()
-                    ->title('Kehadiran diperbarui')
-                    ->body("{$record->nama_tamu} kini ditandai sebagai " . ($state ? 'Hadir ✅' : 'Tidak Hadir ❌'))
-                    ->success()
-                    ->send();
-
                 return $record->kehadiran === 'hadir';
             }),
     ])
@@ -166,6 +152,12 @@ class DaftarTamuResource extends Resource
                     'VIP' => 'VIP',
                     'REGULER' => 'Reguler',
                 ]),
+            Tables\Filters\SelectFilter::make('kehadiran')
+                ->options([
+                    'hadir' => 'Hadir',
+                    'tidak' => 'Tidak Hadir',
+                ])
+                ->label('Filter Kehadiran'),
         ])
 
         ->actions([

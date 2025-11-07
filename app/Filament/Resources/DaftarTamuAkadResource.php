@@ -48,14 +48,6 @@ class DaftarTamuAkadResource extends Resource
                 ])
                 ->default('tidak')
                 ->required(),
-                Forms\Components\Select::make('kehadiran')
-                ->label('Kehadiran')
-                ->options([
-                    'hadir' => 'Hadir',
-                    'tidak' => 'Tidak Hadir',
-                ])
-                ->default('tidak')
-                ->required(),
         ]);
     }
 
@@ -63,11 +55,6 @@ class DaftarTamuAkadResource extends Resource
 {
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('id')
-                ->label('ID')
-                ->sortable()
-                ->toggleable(),
-
             Tables\Columns\TextColumn::make('nama_tamu_akad')
                 ->label('Nama Tamu Akad')
                 ->searchable()
@@ -85,12 +72,6 @@ class DaftarTamuAkadResource extends Resource
                 ->updateStateUsing(function ($state, $record) {
                     $record->kehadiran = $state ? 'hadir' : 'tidak';
                     $record->save();
-
-                    Notification::make()
-                        ->title('Status Kehadiran Diperbarui')
-                        ->success()
-                        ->send();
-
                     return $record->kehadiran === 'hadir';
                 }),
         ])
