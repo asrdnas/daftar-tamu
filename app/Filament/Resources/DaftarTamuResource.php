@@ -49,8 +49,9 @@ class DaftarTamuResource extends Resource
                     ->label('Status')
                     ->options([
                         'VIP' => 'VIP',
+                        'VVIP' => 'VVIP',
                     ])
-                    ->default('VIP')
+                    ->default('VVIP')
                     ->required(),
                 Forms\Components\Select::make('status_tamu')
                     ->label('Status Tamu')
@@ -150,7 +151,7 @@ class DaftarTamuResource extends Resource
                 ->label('Filter Status')
                 ->options([
                     'VIP' => 'VIP',
-                    'REGULER' => 'Reguler',
+                    'VVIP' => 'VVIP',
                 ]),
             Tables\Filters\SelectFilter::make('kehadiran')
                 ->options([
