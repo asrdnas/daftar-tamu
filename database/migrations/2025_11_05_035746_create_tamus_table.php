@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('nama_tamu');
             $table->text('alamat');
-            $table->string('meja');
             $table->string('status');
             $table->enum('kehadiran', ['hadir', 'tidak'])->default('tidak');
             $table->enum('status_tamu', ['stay', 'pulang'])->default('stay');

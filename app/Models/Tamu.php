@@ -9,8 +9,9 @@ class Tamu extends Model
     protected $fillable = [
         'nama_tamu',
         'alamat',
-        'meja',
         'status',
+        'kehadiran',
         'status_tamu',
+
     ];
 }

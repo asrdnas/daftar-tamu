@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TamuExport;
+use Filament\Tables\Actions\Action;
 
 
 class DaftarTamuResource extends Resource
@@ -39,11 +42,6 @@ class DaftarTamuResource extends Resource
                 Forms\Components\Textarea::make('alamat')
                     ->label('Alamat')
                     ->required(),
-
-                Forms\Components\TextInput::make('meja')
-                    ->label('Meja')
-                    ->required()
-                    ->maxLength(50),
 
                 Forms\Components\Select::make('status')
                     ->label('Status')
@@ -82,10 +80,7 @@ class DaftarTamuResource extends Resource
             ->searchable()
             ->sortable()
             ->weight('bold')
-            ->color(fn ($record) => $record->status === 'VIP' ? 'warning' : 'gray')
-            ->icon(fn ($record) => $record->status === 'VIP' ? 'heroicon-o-star' : 'heroicon-o-user')
-            ->tooltip(fn ($record) => $record->status === 'VIP' ? 'Tamu Kehormatan' : 'Tamu Reguler')
-            ->alignCenter(),
+            ->alignStart(),
 
         // Kolom Alamat
         Tables\Columns\TextColumn::make('alamat')
@@ -95,21 +90,9 @@ class DaftarTamuResource extends Resource
             ->wrap()
             ->alignCenter(),
 
-        // Kolom Meja
-        Tables\Columns\TextColumn::make('meja')
-            ->label('Meja')
-            ->color('success')
-            ->sortable()
-            ->alignCenter(),
-
         // Kolom Status (VIP / REGULER)
         Tables\Columns\TextColumn::make('status')
             ->label('Status')
-            ->colors([
-                'warning' => fn ($state) => $state === 'VIP',
-                'gray' => fn ($state) => $state !== 'VIP',
-            ])
-            ->icon(fn ($state) => $state === 'VIP' ? 'heroicon-o-star' : 'heroicon-o-user')
             ->formatStateUsing(fn ($state) => strtoupper($state))
             ->sortable()
             ->alignCenter(),
@@ -160,7 +143,14 @@ class DaftarTamuResource extends Resource
                 ])
                 ->label('Filter Kehadiran'),
         ])
-
+         ->headerActions([
+            Action::make('export')
+                ->label('Export ke Excel')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->action(function () {
+                    return Excel::download(new TamuExport, 'daftar_tamu.xlsx');
+                }),
+        ])
         ->actions([
             Tables\Actions\EditAction::make()
                 ->label('Edit')
