@@ -29,7 +29,7 @@ class TamuExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-             'nama_tamu',
+            'nama_tamu',
             'alamat',
             'nomor_meja',
             'status',
