@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_tamu')->index();
             $table->text('alamat');
             $table->integer('nomor_meja')->nullable()->index();
-            $table->string('status')->index();
+            $table->string('status')->nullable()->index();
             $table->enum('kehadiran', ['hadir', 'tidak'])->default('tidak')->index();
             $table->enum('status_tamu', ['stay', 'pulang'])->default('stay');
             $table->timestamps();
