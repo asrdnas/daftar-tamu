@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('tamus', function (Blueprint $table) {
             $table->id();
             $table->string('nama_tamu')->index();
-            $table->text('alamat');
             $table->integer('nomor_meja')->nullable()->index();
+            $table->string('alamat')->nullable()->index();
             $table->string('status')->nullable()->index();
-            $table->enum('kehadiran', ['hadir', 'tidak'])->default('tidak')->index();
             $table->enum('status_tamu', ['stay', 'pulang'])->default('stay');
+            $table->enum('kehadiran', ['hadir', 'tidak'])->default('tidak')->index();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

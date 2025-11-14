@@ -44,6 +44,6 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('123123'),
         ]);
 
-        Excel::import(new TamuImport, database_path('seeders/data/daftar_tamu.xlsx'));
+        Excel::import(new TamuImport, database_path('seeders/data/daftar_tamu (1).xlsx'));
     }
 }
