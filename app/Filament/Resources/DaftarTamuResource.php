@@ -45,6 +45,12 @@ class DaftarTamuResource extends Resource
                     ->label('Alamat')
                     ->required(),
 
+                    Forms\Components\TextInput::make('nomor_meja')
+                    ->label('Nomor Meja')
+                    ->numeric()
+                    ->placeholder('Contoh: 12')
+                    ->nullable(),
+
                 Forms\Components\Select::make('status')
                     ->label('Status')
                     ->options([
@@ -84,6 +90,14 @@ class DaftarTamuResource extends Resource
             ->weight('bold')
             ->alignStart(),
 
+            //kolom nomer meja
+            Tables\Columns\TextColumn::make('nomor_meja')
+            ->label('Nomer Meja')
+            ->searchable()
+            ->sortable()
+            ->weight('bold')
+            ->alignStart(),
+
         // Kolom Alamat
         Tables\Columns\TextColumn::make('alamat')
             ->label('Alamat')
@@ -106,7 +120,7 @@ class DaftarTamuResource extends Resource
             ->onColor('success')
             ->offColor('danger')
             ->alignCenter()
-            ->disabledClick() 
+            ->disabledClick()
             ->getStateUsing(fn ($record) => $record->status_tamu === 'stay')
             ->updateStateUsing(function ($state, $record) {
                 $record->status_tamu = $state ? 'stay' : 'pulang';

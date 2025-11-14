@@ -12,6 +12,7 @@ class Tamu extends Model
         'status',
         'kehadiran',
         'status_tamu',
+        'nomor_meja',
 
     ];
 }

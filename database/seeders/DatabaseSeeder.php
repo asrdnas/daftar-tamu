@@ -7,6 +7,8 @@ use App\Models\Admin;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Imports\TamuImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DatabaseSeeder extends Seeder
 {
@@ -41,5 +43,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin3@example.com',
             'password' => Hash::make('123123'),
         ]);
+
+        Excel::import(new TamuImport, database_path('seeders/data/daftar_tamu.xlsx'));
     }
 }
