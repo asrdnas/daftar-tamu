@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('tamus', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_tamu');
+            $table->string('nama_tamu')->index();
             $table->text('alamat');
-            $table->string('status');
-            $table->enum('kehadiran', ['hadir', 'tidak'])->default('tidak');
+            $table->string('status')->index();
+            $table->enum('kehadiran', ['hadir', 'tidak'])->default('tidak')->index();
             $table->enum('status_tamu', ['stay', 'pulang'])->default('stay');
             $table->timestamps();
         });
