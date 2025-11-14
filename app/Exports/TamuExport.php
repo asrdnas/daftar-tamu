@@ -16,6 +16,7 @@ class TamuExport implements FromCollection, WithHeadings
         return Tamu::select(
             'nama_tamu',
             'alamat',
+            'nomor_meja',
             'status',
             'kehadiran',
             'status_tamu',
@@ -30,6 +31,7 @@ class TamuExport implements FromCollection, WithHeadings
         return [
             'Nama Tamu',
             'Alamat',
+            'Nomor Meja',
             'Status',
             'Kehadiran',
             'Status Tamu',
