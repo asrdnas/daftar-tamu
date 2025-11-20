@@ -92,7 +92,7 @@ class DaftarTamuAkadResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]),
         ])
-        ->poll('3s');
+        ->poll('5s');
 }
 
 

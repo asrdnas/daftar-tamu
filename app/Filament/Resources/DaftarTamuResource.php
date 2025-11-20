@@ -191,7 +191,7 @@ class DaftarTamuResource extends Resource
         ])
 
         ->striped()
-        ->poll('3s');
+        ->poll('5s');
 }
 
 
